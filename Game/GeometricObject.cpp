@@ -4,6 +4,7 @@
 #include "Circle.h"
 #include "Box.h"
 
+//Factory Pattern
 namespace gb
 {
 	GeometricObject* GeometricObject::makeTriangle(const RGB& _color, const vec2& _pos, const float& _size)

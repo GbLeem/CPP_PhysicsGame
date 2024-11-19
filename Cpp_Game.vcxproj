@@ -139,6 +139,8 @@
     <ClInclude Include="Game\Box.h" />
     <ClInclude Include="Game\Circle.h" />
     <ClInclude Include="Game\GeometricObject.h" />
+    <ClInclude Include="Game\RigidCircle.h" />
+    <ClInclude Include="Game\RigidObject.h" />
     <ClInclude Include="Game\Triangle.h" />
     <ClInclude Include="Scene\Example.h" />
     <ClInclude Include="Scene\PhysicsExample.h" />
@@ -148,6 +150,7 @@
     <ClCompile Include="Engine\Game2D.cpp" />
     <ClCompile Include="Engine\Timer.cpp" />
     <ClCompile Include="Game\GeometricObject.cpp" />
+    <ClCompile Include="Game\RigidObject.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
