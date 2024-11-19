@@ -28,7 +28,7 @@ namespace gb
 
 		void Update() override
 		{
-			const float dt = GetTimeStep() * 0.4f;
+			const float dt = GetTimeStep() * 0.2f;
 			
 			rb0.Update(dt);
 			rb0.Draw();
