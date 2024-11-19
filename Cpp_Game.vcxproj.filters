@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{df1b2264-fc29-428a-9ca3-d3559967187e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Engine\Vector2.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Vector3.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Game2D.h" />
+    <ClInclude Include="Engine\Timer.h" />
+    <ClInclude Include="Engine\Colors.h" />
+    <ClInclude Include="Engine\RGB.h" />
+    <ClInclude Include="Engine\DrawFunctions.h" />
+    <ClInclude Include="Scene\Example.h" />
+    <ClInclude Include="Scene\PhysicsExample.h" />
+    <ClInclude Include="Game\Circle.h" />
+    <ClInclude Include="Game\Box.h" />
+    <ClInclude Include="Game\Triangle.h" />
+    <ClInclude Include="Game\GeometricObject.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Engine\Game2D.cpp" />
+    <ClCompile Include="Engine\Timer.cpp" />
+    <ClCompile Include="Engine\DrawFunctions.cpp" />
+    <ClCompile Include="Game\GeometricObject.cpp" />
+  </ItemGroup>
+</Project>
