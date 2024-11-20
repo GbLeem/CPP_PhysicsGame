@@ -129,9 +129,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Actor.h" />
     <ClInclude Include="Engine\Colors.h" />
+    <ClInclude Include="Engine\Command.h" />
     <ClInclude Include="Engine\DrawFunctions.h" />
     <ClInclude Include="Engine\Game2D.h" />
+    <ClInclude Include="Engine\InputHandler.h" />
     <ClInclude Include="Engine\RGB.h" />
     <ClInclude Include="Engine\Timer.h" />
     <ClInclude Include="Engine\Vector2.h" />

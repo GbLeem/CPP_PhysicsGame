@@ -25,6 +25,9 @@
     <ClInclude Include="Game\GeometricObject.h" />
     <ClInclude Include="Game\RigidObject.h" />
     <ClInclude Include="Game\RigidCircle.h" />
+    <ClInclude Include="Engine\Actor.h" />
+    <ClInclude Include="Engine\Command.h" />
+    <ClInclude Include="Engine\InputHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

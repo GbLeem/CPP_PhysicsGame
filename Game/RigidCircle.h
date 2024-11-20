@@ -29,6 +29,24 @@ namespace gb
 			, radius(_radius)
 			, mass(_mass)
 		{}
+		
+		int GetCenterX()
+		{
+			return pos.x;
+		}
+		int GetCenterY()
+		{
+			return pos.y;
+		}
+		void SetXPos(float value)
+		{
+			pos.x += value;
+		}
+
+		void SetYPos(float value)
+		{
+			pos.y += value;
+		}
 
 		void Draw()
 		{
@@ -72,7 +90,7 @@ namespace gb
 				if (vel.y <= 0.0f)
 					vel.y *= -1.0f * coef_res;
 
-				vel.x *= coef_friction;
+				//vel.x *= coef_friction;
 			}
 		}
 
