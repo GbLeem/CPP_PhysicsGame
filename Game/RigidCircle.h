@@ -28,15 +28,31 @@ namespace gb
 			, color(_color)
 			, radius(_radius)
 			, mass(_mass)
-		{}
-		
-		int GetCenterX()
+		{}	
+
+		float GetCenterX()
 		{
 			return pos.x;
 		}
-		int GetCenterY()
+		float GetCenterY()
 		{
 			return pos.y;
+		}
+		vec2 GetCenterPos()
+		{
+			return pos;
+		}
+		float GetRadius()
+		{
+			return radius;
+		}
+		vec2 GetVelocity()
+		{
+			return vel;
+		}
+		float GetMass()
+		{
+			return mass;
 		}
 		void SetXPos(float value)
 		{
@@ -46,6 +62,12 @@ namespace gb
 		void SetYPos(float value)
 		{
 			pos.y += value;
+		}
+
+		void SetVelocity(vec2 value)
+		{
+			vel.x += value.x;
+			vel.y += value.y;
 		}
 
 		void Draw()
