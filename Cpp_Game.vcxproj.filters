@@ -28,6 +28,8 @@
     <ClInclude Include="Engine\Actor.h" />
     <ClInclude Include="Engine\Command.h" />
     <ClInclude Include="Engine\InputHandler.h" />
+    <ClInclude Include="Scene\Game01.h" />
+    <ClInclude Include="Game\Board.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

@@ -57,4 +57,13 @@ namespace gb
 			actor.Jump(dt);
 		}
 	};
+
+	class ActionCommand : public Command
+	{
+	public:
+		virtual void Execute(Actor& actor, float dt)
+		{
+			actor.Action(dt);
+		}
+	};
 }

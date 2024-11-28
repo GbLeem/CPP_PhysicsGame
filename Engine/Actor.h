@@ -10,5 +10,6 @@ namespace gb
 		virtual void MoveLeft(float dt) = 0;
 		virtual void MoveRight(float dt) = 0;
 		virtual void Jump(float dt) = 0;
+		virtual void Action(float dt) = 0;
 	};	
 }

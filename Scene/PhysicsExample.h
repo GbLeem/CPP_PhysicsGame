@@ -35,6 +35,10 @@ namespace gb
 		{
 			myBall->SetYPos(0.005f);
 		}
+		void Action(float dt) override
+		{
+			//
+		}
 		float GetXPos()
 		{
 			return myBall->GetCenterX();
@@ -113,26 +117,19 @@ namespace gb
 			
 			inputhandler.handleInput(*this, myball, GetTimeStep());
 
-			myball.Update(dt);			
+			//FOR TEST
+			/*myball.Update(dt);			
 			obstacle->Update(dt);
 
 			const float distance = (myball.GetPos() - obstacle->GetCenterPos()).GetMagnitude();
-			
-			/*printf("my ball : %f, %f\n", myball.GetPos().x, myball.GetPos().y);
-			printf("obstacle : %f, %f\n", obstacle->GetCenterPos().x, obstacle->GetCenterPos().y);*/
-			
-			//printf("my ball : %d\n", myball.GetRaius());
-			//printf("obstacle : %d\n", obstacle->GetRadius());
-
+		
 			if (distance <= myball.GetRaius() + obstacle->GetRadius())
 			{
-				//printf("collision\n");
-
 				const auto vel = myball.GetVelocity() - obstacle->GetVelocity();
 				const auto normal = -(obstacle->GetCenterPos() - myball.GetPos()) /
 					(obstacle->GetCenterPos() - myball.GetPos()).GetMagnitude();
 
-				if (vel.DotProduct(normal) < 0.0001f)
+				if (vel.DotProduct(normal) < 0.0f)
 				{
 					const auto impulse = normal * -(1.0f + 0.5f) *
 						vel.DotProduct(normal) / ((1.f) / myball.GetMass() + (1.f) / obstacle->GetMass());
@@ -140,7 +137,7 @@ namespace gb
 					myball.SetVelocity(impulse / myball.GetMass());
 					obstacle->SetVelocity(-impulse / obstacle->GetMass());
 				}
-			}
+			}*/
 
 			DrawWall();
 			myball.Draw();
