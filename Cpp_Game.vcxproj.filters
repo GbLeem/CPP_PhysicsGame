@@ -31,6 +31,10 @@
     <ClInclude Include="Scene\Game01.h" />
     <ClInclude Include="Game\Board.h" />
     <ClInclude Include="Engine\RandomNumberGernerator.h" />
+    <ClInclude Include="Game\Fruit.h" />
+    <ClInclude Include="Game\Hand.h" />
+    <ClInclude Include="Game\Level.h" />
+    <ClInclude Include="Game\FruitContainer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -39,5 +43,6 @@
     <ClCompile Include="Engine\DrawFunctions.cpp" />
     <ClCompile Include="Game\GeometricObject.cpp" />
     <ClCompile Include="Game\RigidObject.cpp" />
+    <ClCompile Include="Game\FruitContainer.cpp" />
   </ItemGroup>
 </Project>
