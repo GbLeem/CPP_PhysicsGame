@@ -24,6 +24,6 @@ namespace gb
 			:BASECOLOR(rgb.r, rgb.g, rgb.b)
 		{}
 		~RGB()
-		{}
+		{}		
 	};
 }

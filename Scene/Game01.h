@@ -7,11 +7,48 @@
 
 #include <queue>
 #include <stack>
+#include <unordered_map>
 
 namespace gb
 {
-	class Fruit
+	enum class eFruitLevel
 	{
+		NONE, // 0
+		BLUE, // 1
+		RED,
+		YELLOW,
+		GREEN,
+		BLACK
+	};
+
+	class UpgradeContainer
+	{
+	public:
+		UpgradeContainer()
+		{
+			//setup color
+			RandomColorContainer.push_back({ Colors::blue, 0.1f });
+			RandomColorContainer.push_back({ Colors::red, 0.12f });
+			RandomColorContainer.push_back({ Colors::yellow, 0.14f });
+			RandomColorContainer.push_back({ Colors::green, 0.16f });
+			RandomColorContainer.push_back({ Colors::black, 0.18f });
+
+			//setup int to color
+			IntToLevel[0] = eFruitLevel::BLUE;
+			IntToLevel[1] = eFruitLevel::RED;
+			IntToLevel[2] = eFruitLevel::YELLOW;
+			IntToLevel[3] = eFruitLevel::GREEN;
+			IntToLevel[4] = eFruitLevel::BLACK;
+		}
+
+	public:
+		std::vector<std::pair<RGB, float>> RandomColorContainer;
+		std::unordered_map<int, eFruitLevel> IntToLevel;
+		std::unordered_map<eFruitLevel, int> LevelToInt;
+	};
+
+	class Fruit
+	{		
 	public:
 		Fruit()
 			:pos(0.f, 0.6f)
@@ -21,16 +58,18 @@ namespace gb
 			, mass(0.1f)
 			, bMove(true)
 			, gravity(0.f, 0.f)
+			, level(eFruitLevel::NONE)
 		{}
 
-		Fruit(RGB _color, float _radius)
+		Fruit(RGB _color, float _radius, eFruitLevel _lvl)
 			:pos(0.f, 0.6f)
 			,vel(0.f,0.f)
 			,color(_color)
 			,radius(_radius)
-			,mass(0.5f)
+			,mass(2.f)
 			,bMove(true)
 			,gravity(0.f,0.f)
+			,level(_lvl)
 		{}
 
 		void DrawFruit(RGB _color, float _radius)
@@ -43,7 +82,7 @@ namespace gb
 			EndTransformation();
 		}
 
-		//setter
+		//====setter====
 		void SetXPos(float value)
 		{
 			pos.x += value;
@@ -58,7 +97,14 @@ namespace gb
 			vel.x += value.x;
 			vel.y += value.y;
 		}
-		//getter
+		void ReSetFruit(Fruit* other)
+		{			
+			pos = other->GetPos();
+			color = other->GetColor();
+			radius = other->GetRadius();
+		}
+
+		//====getter====
 		float GetXPos()
 		{
 			return pos.x;
@@ -95,26 +141,50 @@ namespace gb
 		{
 			return color;
 		}
+		eFruitLevel GetLevel()
+		{
+			return level;
+		}
 
 		void Collide(Fruit* other)
 		{
 			const float distance = (GetPos() - other->GetPos()).GetMagnitude();
 
-			if (distance <= other->GetRadius() + GetRadius())
-			{
-				const auto vel = GetVelocity() - other->GetVelocity();
-				const auto normal = -(other->GetPos() - GetPos()) / (other->GetPos() - GetPos()).GetMagnitude();
-
-				if (vel.DotProduct(normal) < 0.f)
+			if (distance <= other->GetRadius() + GetRadius()) //충돌이 된 경우
+			{				
+				if (other->GetLevel() == GetLevel())
 				{
-					const auto impulse = normal * -(1.0 + 0.5f) * vel.DotProduct(normal) / ((1.f) / GetMass() + (1.f) / other->GetMass());
+					int newLevel = (container.LevelToInt[GetLevel()] + 1) % container.LevelToInt.size();
+					RGB newColor = container.RandomColorContainer[newLevel].first;
+					float newRadius = container.RandomColorContainer[newLevel].second;
+					eFruitLevel newFruitLevel = container.IntToLevel[newLevel];
 
-					SetVelocity(impulse / GetMass());
-					other->SetVelocity(-impulse / other->GetMass());
+					Fruit* newFruit = new Fruit(newColor, newRadius, newFruitLevel);
+					
+					delete other;
+					delete this;
+					//other->color = newColor;
+					//other->radius = newRadius;
+					//other->level = newFruitLevel;
+
+					
+				}
+				else
+				{
+					const vec2 vel = GetVelocity() - other->GetVelocity();
+					const auto normal = -(other->GetPos() - GetPos()) / (other->GetPos() - GetPos()).GetMagnitude();
+
+					if (vel.DotProduct(normal) < 0.f)
+					{
+						const auto impulse = normal * -(1.0f) * vel.DotProduct(normal) / ((1.f) / GetMass() + (1.f) / other->GetMass());
+
+						SetVelocity(impulse / GetMass());
+						other->SetVelocity(-impulse / other->GetMass());
+					}						
 				}
 			}
 		}
-		
+				
 		void Update(const float& dt)
 		{			
 			static const float coef_res = 0.7f; // coefficient of restitution
@@ -174,6 +244,8 @@ namespace gb
 		bool bMove;
 		vec2 gravity;
 		bool bOnGround = false;
+		eFruitLevel level;
+		UpgradeContainer container;
 	};
 
 	class Hand : public Actor
@@ -187,10 +259,19 @@ namespace gb
 				nextFruits.push(currentFruit);
 			}
 
+			//setup color
 			RandomColorContainer.push_back({ Colors::blue, 0.1f });
 			RandomColorContainer.push_back({ Colors::red, 0.12f });
 			RandomColorContainer.push_back({ Colors::yellow, 0.14f });
 			RandomColorContainer.push_back({ Colors::green, 0.16f });
+			RandomColorContainer.push_back({ Colors::black, 0.18f });
+
+			//setup int to color
+			IntToLevel[0] = eFruitLevel::BLUE;
+			IntToLevel[1] = eFruitLevel::RED;
+			IntToLevel[2] = eFruitLevel::YELLOW;
+			IntToLevel[3] = eFruitLevel::GREEN;
+			IntToLevel[4] = eFruitLevel::BLACK;
 		}
 		~Hand()
 		{
@@ -263,7 +344,7 @@ namespace gb
 			if (nextFruits.empty())
 			{
 				int randomInt = GetRandomInteger();
-				Fruit* currentFruit = new Fruit(RandomColorContainer[randomInt].first, RandomColorContainer[randomInt].second);
+				Fruit* currentFruit = new Fruit(RandomColorContainer[randomInt].first, RandomColorContainer[randomInt].second, IntToLevel[randomInt]);
 				nextFruits.push(currentFruit);
 			}
 
@@ -272,20 +353,26 @@ namespace gb
 				for (const auto& f : groundFruits)
 				{
 					f->Update(dt);
-					for (const auto& other : groundFruits)
-					{
-						f->Collide(other);
+
+					for (auto& other : groundFruits)
+					{												
+						if (f != other)
+						{
+							f->Collide(other);
+						}
 					}
 				}
 			}			
 		}
 
-	private:
-		vec2 handPos = vec2(0.f, 0.6f);			
+	public:
 		std::queue<Fruit*> nextFruits;
-		std::vector<Fruit*> groundFruits;
-		bool bMakeFruit = true;
+		std::vector<Fruit*> groundFruits;		
+
 		std::vector<std::pair<RGB, float>> RandomColorContainer;
+		std::unordered_map<int, eFruitLevel> IntToLevel;
+		std::unordered_map<eFruitLevel, int> LevelToInt;
+
 		RandomNumberGenerator randomNumberGenerator;
 	};
 
@@ -300,7 +387,6 @@ namespace gb
 		{
 			inputhandler.key_command_map[GLFW_KEY_RIGHT] = new RightCommand;
 			inputhandler.key_command_map[GLFW_KEY_LEFT] = new LeftCommand;
-			//inputhandler.key_command_map[GLFW_KEY_SPACE] = new ActionCommand;
 		}
 		~WaterMelonGame()
 		{}
