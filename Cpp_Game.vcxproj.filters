@@ -30,6 +30,7 @@
     <ClInclude Include="Engine\InputHandler.h" />
     <ClInclude Include="Scene\Game01.h" />
     <ClInclude Include="Game\Board.h" />
+    <ClInclude Include="Engine\RandomNumberGernerator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

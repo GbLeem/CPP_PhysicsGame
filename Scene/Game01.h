@@ -1,9 +1,12 @@
 #pragma once
 
 #include "Actor.h"
-#include "InputHandler.h"
 #include "Game/Board.h"
-//#include <vector>
+#include "InputHandler.h"
+#include "RandomNumberGernerator.h"
+
+#include <queue>
+#include <stack>
 
 namespace gb
 {
@@ -18,6 +21,16 @@ namespace gb
 			, mass(0.1f)
 			, bMove(true)
 			, gravity(0.f, 0.f)
+		{}
+
+		Fruit(RGB _color, float _radius)
+			:pos(0.f, 0.6f)
+			,vel(0.f,0.f)
+			,color(_color)
+			,radius(_radius)
+			,mass(0.5f)
+			,bMove(true)
+			,gravity(0.f,0.f)
 		{}
 
 		void DrawFruit(RGB _color, float _radius)
@@ -57,10 +70,14 @@ namespace gb
 		float GetRadius()
 		{
 			return radius;
-		}
-		bool GetMovingState()
+		}		
+		bool GetMovingState() //키보드 좌우 입력 불가능하게 막는 것
 		{
 			return bMove;
+		}
+		bool GetOnGround()
+		{
+			return bOnGround;
 		}
 		vec2 GetVelocity()
 		{
@@ -74,10 +91,14 @@ namespace gb
 		{
 			return vel;
 		}
+		RGB GetColor()
+		{
+			return color;
+		}
 
 		void Collide(Fruit* other)
 		{
-			const float distance = (other->GetPos(), GetPos()).GetMagnitude();
+			const float distance = (GetPos() - other->GetPos()).GetMagnitude();
 
 			if (distance <= other->GetRadius() + GetRadius())
 			{
@@ -86,14 +107,14 @@ namespace gb
 
 				if (vel.DotProduct(normal) < 0.f)
 				{
-					const auto impulse = normal * (-1.0 + 0.5f) * vel.DotProduct(normal) / ((1.f) / GetMass() + (1.f) / other->GetMass());
+					const auto impulse = normal * -(1.0 + 0.5f) * vel.DotProduct(normal) / ((1.f) / GetMass() + (1.f) / other->GetMass());
 
 					SetVelocity(impulse / GetMass());
 					other->SetVelocity(-impulse / other->GetMass());
 				}
 			}
 		}
-
+		
 		void Update(const float& dt)
 		{			
 			static const float coef_res = 0.7f; // coefficient of restitution
@@ -106,7 +127,7 @@ namespace gb
 			{
 				bMove = false;
 			}
-			if (vel.y == 0.f)
+			if (vel.y == 0.f && bOnGround)
 			{
 				bMove = true;
 			}
@@ -137,6 +158,11 @@ namespace gb
 				if (vel.y <= 0.0f)
 					vel.y *= -1.0f * coef_res;
 			}				
+
+			if (pos.y == -1.0f + radius)
+			{
+				bOnGround = true;
+			}
 		}
 
 	private:
@@ -147,14 +173,28 @@ namespace gb
 		float mass;
 		bool bMove;
 		vec2 gravity;
+		bool bOnGround = false;
 	};
 
 	class Hand : public Actor
 	{
 	public:	
+		Hand()
+		{
+			if (nextFruits.empty())
+			{
+				Fruit* currentFruit = new Fruit;
+				nextFruits.push(currentFruit);
+			}
+
+			RandomColorContainer.push_back({ Colors::blue, 0.1f });
+			RandomColorContainer.push_back({ Colors::red, 0.12f });
+			RandomColorContainer.push_back({ Colors::yellow, 0.14f });
+			RandomColorContainer.push_back({ Colors::green, 0.16f });
+		}
 		~Hand()
 		{
-			delete currentFruit;
+			//delete currentFruit;
 		}
 		void MoveUp(float dt) override
 		{
@@ -165,67 +205,88 @@ namespace gb
 			//
 		}
 		void MoveLeft(float dt) override
-		{							
-			if(currentFruit->GetXPos() > -1.2f && currentFruit->GetMovingState())
-				currentFruit->SetXPos(-0.5f * dt);
+		{
+			if (!nextFruits.empty())
+			{
+				if(nextFruits.front()->GetXPos() > -1.2f && nextFruits.front()->GetMovingState())
+					nextFruits.front()->SetXPos(-0.5f * dt);
+			}
 		}
 		void MoveRight(float dt) override
 		{
-			if (currentFruit->GetXPos() < 0.8f && currentFruit->GetMovingState())
-				currentFruit->SetXPos(0.5f * dt);
+			if (!nextFruits.empty())
+			{
+				if (nextFruits.front()->GetXPos() < 0.8f && nextFruits.front()->GetMovingState())
+					nextFruits.front()->SetXPos(0.5f * dt);
+			}
 		}
 		void Jump(float dt) override
 		{
 			//
 		}
+
 		void Action(float dt) override
-		{
-			currentFruit->SetYVelocity();
-			fruits.push_back(currentFruit);		
+		{			
+			//
 		}
 
-
-
-		RGB GetRandomColor()
+		void ShootFruit()
 		{
-			return Colors::blue;
+			if (!nextFruits.empty())
+			{
+				groundFruits.push_back(nextFruits.front());
+				groundFruits.back()->SetYVelocity();			
+				nextFruits.pop();
+			}
 		}
 
-		float GetRandomFloat()
+		int GetRandomInteger()
 		{
-			return 0.1f;
-		}
-
+			return randomNumberGenerator.getInt(0, RandomColorContainer.size() - 1);
+		}	
 
 		//draw current fruits
 		void Draw()
-		{
-			//currentFruit->DrawFruit(GetRandomColor(), GetRandomFloat());
-			for (const auto& f : fruits)
+		{			
+			if (!nextFruits.empty())
+				nextFruits.front()->DrawFruit(nextFruits.front()->GetColor(), nextFruits.front()->GetRadius());
+
+			for (const auto& f : groundFruits)
 			{
-				f->DrawFruit(GetRandomColor(), GetRandomFloat());
+				f->DrawFruit(f->GetColor(), f->GetRadius());
 			}
 		}
 
 		void Update(const float& dt)
 		{
-			currentFruit->Update(dt);
-
-			/*if (currentFruit->GetVelocity().x == 0.f && currentFruit->GetVelocity().y == 0.f)
-			{				
-				currentFruit = nullptr;
-				currentFruit = new Fruit();
-			}*/
-			for (auto f : fruits)
+			//시작 처리
+			if (nextFruits.empty())
 			{
-				currentFruit->Collide(f);
+				int randomInt = GetRandomInteger();
+				Fruit* currentFruit = new Fruit(RandomColorContainer[randomInt].first, RandomColorContainer[randomInt].second);
+				nextFruits.push(currentFruit);
 			}
+
+			if (!groundFruits.empty())
+			{
+				for (const auto& f : groundFruits)
+				{
+					f->Update(dt);
+					for (const auto& other : groundFruits)
+					{
+						f->Collide(other);
+					}
+				}
+			}			
 		}
 
 	private:
-		vec2 handPos = vec2(0.f, 0.6f);
-		Fruit* currentFruit = new Fruit(); // TODO : 이걸 생성
-		std::vector<Fruit*> fruits;
+		vec2 handPos = vec2(0.f, 0.6f);			
+		std::queue<Fruit*> nextFruits;
+		std::vector<Fruit*> groundFruits;
+		bool bMakeFruit = true;
+		std::vector<std::pair<RGB, float>> RandomColorContainer;
+		RandomNumberGenerator randomNumberGenerator;
 	};
 
 	
@@ -239,7 +300,7 @@ namespace gb
 		{
 			inputhandler.key_command_map[GLFW_KEY_RIGHT] = new RightCommand;
 			inputhandler.key_command_map[GLFW_KEY_LEFT] = new LeftCommand;
-			inputhandler.key_command_map[GLFW_KEY_SPACE] = new ActionCommand;
+			//inputhandler.key_command_map[GLFW_KEY_SPACE] = new ActionCommand;
 		}
 		~WaterMelonGame()
 		{}
@@ -250,8 +311,13 @@ namespace gb
 			board.DrawBoard(Colors::blue, 10.f);
 			inputhandler.handleInput(*this, hand, GetTimeStep());
 
-			hand.Draw();
 			hand.Update(GetTimeStep());
+			hand.Draw();
+
+			if (IsKeyPressedAndReleased(GLFW_KEY_SPACE))
+			{
+				hand.ShootFruit();
+			}
 		}
 
 	private:

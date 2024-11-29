@@ -23,6 +23,6 @@ namespace gb
 					m.second->Execute(actor, dt);
 				}
 			}
-		}
+		}		
 	};
 }
