@@ -144,7 +144,6 @@
     <ClInclude Include="Game\Box.h" />
     <ClInclude Include="Game\Circle.h" />
     <ClInclude Include="Game\Fruit.h" />
-    <ClInclude Include="Game\FruitContainer.h" />
     <ClInclude Include="Game\GeometricObject.h" />
     <ClInclude Include="Game\Hand.h" />
     <ClInclude Include="Game\Level.h" />
@@ -159,7 +158,6 @@
     <ClCompile Include="Engine\DrawFunctions.cpp" />
     <ClCompile Include="Engine\Game2D.cpp" />
     <ClCompile Include="Engine\Timer.cpp" />
-    <ClCompile Include="Game\FruitContainer.cpp" />
     <ClCompile Include="Game\GeometricObject.cpp" />
     <ClCompile Include="Game\RigidObject.cpp" />
     <ClCompile Include="main.cpp" />

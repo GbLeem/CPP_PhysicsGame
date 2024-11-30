@@ -3,7 +3,6 @@
 #include "Game2D.h"
 #include "Level.h"
 #include "Hand.h"
-#include "FruitContainer.h"
 
 namespace gb
 {
@@ -11,7 +10,7 @@ namespace gb
 	{
 	public:
 		Fruit()
-			:pos(0.f, 0.6f)
+			:pos(0.f, 0.8f)
 			, vel(0.f, 0.f)
 			, color(Colors::blue)
 			, radius(0.1f)
@@ -22,13 +21,24 @@ namespace gb
 		{}
 
 		Fruit(RGB _color, float _radius, eFruitLevel _lvl)
-			:pos(0.f, 0.6f)
+			:pos(0.f, 0.9f)
 			, vel(0.f, 0.f)
 			, color(_color)
 			, radius(_radius)
 			, mass(2.f)
 			, bMove(true)
 			, gravity(0.f, 0.f)
+			, level(_lvl)
+		{}
+
+		Fruit(vec2 _pos, RGB _color, float _radius, eFruitLevel _lvl)
+			:pos(_pos)
+			, vel(0.f, 0.f)
+			, color(_color)
+			, radius(_radius)
+			, mass(2.f)
+			, bMove(true)
+			, gravity(0.f, -0.98f)
 			, level(_lvl)
 		{}
 
@@ -106,29 +116,26 @@ namespace gb
 			return level;
 		}
 
-		void Collide(Fruit* other)
+		void Collide(Fruit* other, std::vector<Fruit*> &groundFruits)
 		{
-			auto& fruitContainer = *FruitContainer::getInstance();
-
 			const float distance = (GetPos() - other->GetPos()).GetMagnitude();
 
 			if (distance <= other->GetRadius() + GetRadius()) //충돌이 된 경우
 			{
-				//ColorCheck(other);
-
 				if (other->GetLevel() == GetLevel())
 				{
-					int newLevel = (container.LevelToInt[GetLevel()] + 1) % container.LevelToInt.size();
-					printf("%d", newLevel);
+					int newLevel = (container.LevelToInt[GetLevel()] + 1) % container.LevelToInt.size();					
 					RGB newColor = container.RandomColorContainer[newLevel].first;
 					float newRadius = container.RandomColorContainer[newLevel].second;
 					eFruitLevel newFruitLevel = container.IntToLevel[newLevel];
+					vec2 newPosition = other->GetPos();
 
-					Fruit* newFruit = new Fruit(newColor, newRadius, newFruitLevel);
-					fruitContainer.groundFruits.push_back(newFruit);
 
-					fruitContainer.groundFruits.erase(remove(fruitContainer.groundFruits.begin(), fruitContainer.groundFruits.end(), other), fruitContainer.groundFruits.end());
-					fruitContainer.groundFruits.erase(remove(fruitContainer.groundFruits.begin(), fruitContainer.groundFruits.end(), this), fruitContainer.groundFruits.end());
+					Fruit* newFruit = new Fruit(newPosition, newColor, newRadius, newFruitLevel);
+					groundFruits.push_back(newFruit);
+
+					groundFruits.erase(remove(groundFruits.begin(), groundFruits.end(), other), groundFruits.end());
+					groundFruits.erase(remove(groundFruits.begin(), groundFruits.end(), this), groundFruits.end());
 
 					delete other;
 					delete this;					

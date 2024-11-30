@@ -2,7 +2,6 @@
 
 #include "Actor.h"
 #include "Fruit.h"
-#include "FruitContainer.h"
 #include "RandomNumberGernerator.h"
 #include "Level.h";
 
@@ -14,14 +13,12 @@ namespace gb
 	{
 	public:
 		Hand()
-		{
-			auto& fruitContainer = *FruitContainer::getInstance();
-
-			if (fruitContainer.nextFruits.empty())
+		{			
+			if (nextFruits.empty())
 			{
 				int randomInt = GetRandomInteger();
 				Fruit* currentFruit = new Fruit(container.RandomColorContainer[randomInt].first, container.RandomColorContainer[randomInt].second, container.IntToLevel[randomInt]);
-				fruitContainer.nextFruits.push(currentFruit);
+				nextFruits.push(currentFruit);
 			}			
 		}
 		~Hand()
@@ -37,21 +34,19 @@ namespace gb
 			//
 		}
 		void MoveLeft(float dt) override
-		{
-			auto& fruitContainer = *FruitContainer::getInstance();
-			if (!fruitContainer.nextFruits.empty())
+		{			
+			if (!nextFruits.empty())
 			{
-				if (fruitContainer.nextFruits.front()->GetXPos() > -1.2f && fruitContainer.nextFruits.front()->GetMovingState())
-					fruitContainer.nextFruits.front()->SetXPos(-0.5f * dt);
+				if (nextFruits.front()->GetXPos() > -1.2f && nextFruits.front()->GetMovingState())
+					nextFruits.front()->SetXPos(-0.5f * dt);
 			}
 		}
 		void MoveRight(float dt) override
-		{
-			auto& fruitContainer = *FruitContainer::getInstance();
-			if (!fruitContainer.nextFruits.empty())
+		{			
+			if (!nextFruits.empty())
 			{
-				if (fruitContainer.nextFruits.front()->GetXPos() < 0.8f && fruitContainer.nextFruits.front()->GetMovingState())
-					fruitContainer.nextFruits.front()->SetXPos(0.5f * dt);
+				if (nextFruits.front()->GetXPos() < 0.8f && nextFruits.front()->GetMovingState())
+					nextFruits.front()->SetXPos(0.5f * dt);
 			}
 		}
 		void Jump(float dt) override
@@ -66,12 +61,11 @@ namespace gb
 
 		void ShootFruit()
 		{
-			auto& fruitContainer = *FruitContainer::getInstance();
-			if (!fruitContainer.nextFruits.empty())
+			if (!nextFruits.empty())
 			{
-				fruitContainer.groundFruits.push_back(fruitContainer.nextFruits.front());
-				fruitContainer.groundFruits.back()->SetYVelocity();
-				fruitContainer.nextFruits.pop();
+				groundFruits.push_back(nextFruits.front());
+				groundFruits.back()->SetYVelocity();
+				nextFruits.pop();
 			}
 		}
 
@@ -85,46 +79,46 @@ namespace gb
 		//draw current fruits
 		void Draw()
 		{
-			auto& fruitContainer = *FruitContainer::getInstance();
-			if (!fruitContainer.nextFruits.empty())
-				fruitContainer.nextFruits.front()->DrawFruit(fruitContainer.nextFruits.front()->GetColor(), fruitContainer.nextFruits.front()->GetRadius());
+			if (!nextFruits.empty())
+				nextFruits.front()->DrawFruit(nextFruits.front()->GetColor(), nextFruits.front()->GetRadius());
 
-			for (const auto& f : fruitContainer.groundFruits)
+			for (const auto& f : groundFruits)
 			{
 				f->DrawFruit(f->GetColor(), f->GetRadius());
 			}
 		}
 
 		void Update(const float& dt)
-		{
-			auto& fruitContainer = *FruitContainer::getInstance();
+		{			
 			//시작 처리
-			if (fruitContainer.nextFruits.empty())
+			if (nextFruits.empty())
 			{
 				int randomInt = GetRandomInteger();
 				Fruit* currentFruit = new Fruit(container.RandomColorContainer[randomInt].first, container.RandomColorContainer[randomInt].second, container.IntToLevel[randomInt]);
-				fruitContainer.nextFruits.push(currentFruit);
+				nextFruits.push(currentFruit);
 			}
 
-			if (!fruitContainer.groundFruits.empty())
+			if (!groundFruits.empty())
 			{
-				for (const auto& f : fruitContainer.groundFruits)
+				for (const auto& f : groundFruits)
 				{
 					f->Update(dt);
 
-					for (auto& other : fruitContainer.groundFruits)
+					for (auto& other : groundFruits)
 					{
 						if (f != other)
 						{
-							f->Collide(other);
+							f->Collide(other, groundFruits);
 						}
 					}
 				}
 			}
 		}
 
+	public:
+		std::queue<Fruit*> nextFruits;
+		std::vector<Fruit*> groundFruits;
 	private:
-
 		UpgradeContainer container;
 		RandomNumberGenerator randomNumberGenerator;
 	};
