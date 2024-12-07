@@ -64,7 +64,7 @@ namespace gb
 			if (!nextFruits.empty())
 			{
 				groundFruits.push_back(nextFruits.front());
-				groundFruits.back()->SetYVelocity();
+				//groundFruits.back()->SetYVelocity();
 				nextFruits.pop();
 			}
 		}
@@ -73,7 +73,7 @@ namespace gb
 
 		int GetRandomInteger()
 		{
-			return randomNumberGenerator.getInt(0, container.RandomColorContainer.size() - 1);
+			return randomNumberGenerator.getInt(0, container.RandomColorContainer.size() - 7);
 		}
 
 		//draw current fruits
@@ -90,7 +90,7 @@ namespace gb
 
 		void Update(const float& dt)
 		{			
-			//½ÃÀÛ Ã³¸®
+			//ì²˜ìŒ ì²˜ë¦¬
 			if (nextFruits.empty())
 			{
 				int randomInt = GetRandomInteger();

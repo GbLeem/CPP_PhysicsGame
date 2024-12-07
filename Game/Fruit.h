@@ -25,9 +25,9 @@ namespace gb
 			, vel(0.f, 0.f)
 			, color(_color)
 			, radius(_radius)
-			, mass(2.f)
+			, mass(0.2f)
 			, bMove(true)
-			, gravity(0.f, 0.f)
+			, gravity(0.f, -0.98f)
 			, level(_lvl)
 		{}
 
@@ -36,7 +36,7 @@ namespace gb
 			, vel(0.f, 0.f)
 			, color(_color)
 			, radius(_radius)
-			, mass(2.f)
+			, mass(0.2f)
 			, bMove(true)
 			, gravity(0.f, -0.98f)
 			, level(_lvl)
@@ -59,8 +59,8 @@ namespace gb
 		}
 		void SetYVelocity()
 		{
-			vel.y = -0.1f;
-			gravity = vec2(0.f, -0.98f);
+			//vel.y = -0.1f;
+			//gravity = vec2(0.f, -0.98f);
 		}
 		void SetVelocity(vec2 value)
 		{
@@ -87,7 +87,7 @@ namespace gb
 		{
 			return radius;
 		}
-		bool GetMovingState() //Å°º¸µå ÁÂ¿ì ÀÔ·Â ºÒ°¡´ÉÇÏ°Ô ¸·´Â °Í
+		bool GetMovingState() //í‚¤ë³´ë“œ ì¢Œìš° ì…ë ¥ ë¶ˆê°€ëŠ¥í•˜ê²Œ ë§‰ëŠ” ê²ƒ
 		{
 			return bMove;
 		}
@@ -116,15 +116,15 @@ namespace gb
 			return level;
 		}
 
-		void Collide(Fruit* other, std::vector<Fruit*> &groundFruits)
+		void Collide(Fruit* other, std::vector<Fruit*>& groundFruits)
 		{
 			const float distance = (GetPos() - other->GetPos()).GetMagnitude();
 
-			if (distance <= other->GetRadius() + GetRadius()) //Ãæµ¹ÀÌ µÈ °æ¿ì
+			if (distance < other->GetRadius() + GetRadius()) //ì¶©ëŒì´ ëœ ê²½ìš°
 			{
-				if (other->GetLevel() == GetLevel())
+				if (other->GetLevel() == GetLevel()) //same color fruits
 				{
-					int newLevel = (container.LevelToInt[GetLevel()] + 1) % container.LevelToInt.size();					
+					int newLevel = (container.LevelToInt[GetLevel()] + 1) % container.LevelToInt.size();
 					RGB newColor = container.RandomColorContainer[newLevel].first;
 					float newRadius = container.RandomColorContainer[newLevel].second;
 					eFruitLevel newFruitLevel = container.IntToLevel[newLevel];
@@ -138,29 +138,41 @@ namespace gb
 					groundFruits.erase(remove(groundFruits.begin(), groundFruits.end(), this), groundFruits.end());
 
 					delete other;
-					delete this;					
+					delete this;
 				}
 				else
-				{
+				{											
+					vec2 impactVector = other->pos - pos;
+					float d = impactVector.GetMagnitude();
+
+					float overlap = d - (radius + other->radius);
+					vec2 dir = impactVector / d; //í¬ê¸° 1
+					dir.x *= overlap * 0.5f;
+					dir.y *= overlap * 0.5f;
+
+					other->pos -= dir;
+					pos += dir;										
+
+					//
 					const vec2 vel = GetVelocity() - other->GetVelocity();
 					const auto normal = -(other->GetPos() - GetPos()) / (other->GetPos() - GetPos()).GetMagnitude();
 
 					if (vel.DotProduct(normal) < 0.f)
 					{
-						const auto impulse = normal * -(1.0f) * vel.DotProduct(normal) / ((1.f) / GetMass() + (1.f) / other->GetMass());
+						const auto impulse = normal * -(1.0f + 0.5f) * vel.DotProduct(normal) / ((1.f) / GetMass() + (1.f) / other->GetMass());
 
 						SetVelocity(impulse / GetMass());
 						other->SetVelocity(-impulse / other->GetMass());
-					}
+					}										
 				}
 			}
-		}		
+		}
 
 		void Update(const float& dt)
 		{
-			static const float coef_res = 0.7f; // coefficient of restitution
+			static const float coef_res = 0.1f; // coefficient of restitution
 
-			//¿òÁ÷ÀÌ°Ô ÇÏ±â
+			//ì›€ì§ì´ê²Œ í•˜ê¸°
 			vel += gravity * dt;
 			pos += vel * dt;
 
@@ -173,12 +185,10 @@ namespace gb
 				bMove = true;
 			}
 
-			//º®¿¡ ´êÀ¸¸é Æ¨±â±â
-
-			//right
-			if (0.8f - pos.x <= radius)
+			//ë²½ì— ë‹¿ìœ¼ë©´ íŠ•ê¸°ê¸°			
+			if (0.4f - pos.x <= radius) //right
 			{
-				pos.x = 0.8f - radius;
+				pos.x = 0.4f - radius;
 
 				if (vel.x >= 0.f)
 					vel.x *= -1.f * coef_res;
@@ -204,6 +214,7 @@ namespace gb
 			{
 				bOnGround = true;
 			}
+						
 		}
 
 	private:

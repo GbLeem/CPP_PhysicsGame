@@ -19,10 +19,11 @@ namespace gb
 			//TODO
 		}
 	private:
+		//x y
 		vec2 topleft = { -1.2f, 0.6f };
-		vec2 topright = { 0.8f, 0.6f };
+		vec2 topright = { 0.4f, 0.6f };
 		vec2 bottomleft = { -1.2f, -1.f };
-		vec2 bottomright = { 0.8f, -1.f };
+		vec2 bottomright = { 0.4f, -1.f };
 
 	};
 }
