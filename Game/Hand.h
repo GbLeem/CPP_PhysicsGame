@@ -4,11 +4,12 @@
 #include "Fruit.h"
 #include "RandomNumberGernerator.h"
 #include "Level.h";
+#include "Board.h"
 
 #include <queue>
 
 namespace gb
-{
+{	
 	class Hand : public Actor
 	{
 	public:
@@ -36,16 +37,17 @@ namespace gb
 		void MoveLeft(float dt) override
 		{			
 			if (!nextFruits.empty())
-			{
-				if (nextFruits.front()->GetXPos() > -1.2f && nextFruits.front()->GetMovingState())
+			{												
+				//printf("%f  %f  %f\n", nextFruits.front()->GetXPos(), nextFruits.front()->GetRadius(), board.GetMinX());
+				if (nextFruits.front()->GetXPos() - nextFruits.front()->GetRadius() > -1.2f && nextFruits.front()->GetMovingState())
 					nextFruits.front()->SetXPos(-0.5f * dt);
 			}
 		}
 		void MoveRight(float dt) override
 		{			
 			if (!nextFruits.empty())
-			{
-				if (nextFruits.front()->GetXPos() < 0.8f && nextFruits.front()->GetMovingState())
+			{								
+				if (nextFruits.front()->GetXPos() + nextFruits.front()->GetRadius() < 0.4f && nextFruits.front()->GetMovingState())
 					nextFruits.front()->SetXPos(0.5f * dt);
 			}
 		}
@@ -67,9 +69,7 @@ namespace gb
 				//groundFruits.back()->SetYVelocity();
 				nextFruits.pop();
 			}
-		}
-
-		
+		}		
 
 		int GetRandomInteger()
 		{
@@ -120,6 +120,6 @@ namespace gb
 		std::vector<Fruit*> groundFruits;
 	private:
 		UpgradeContainer container;
-		RandomNumberGenerator randomNumberGenerator;
+		RandomNumberGenerator randomNumberGenerator;		
 	};
 }

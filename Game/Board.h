@@ -18,6 +18,15 @@ namespace gb
 		{
 			//TODO
 		}
+		
+		int GetMinX()
+		{
+			return topleft.x;
+		}
+		int GetMaxX()
+		{
+			return topright.x;
+		}
 	private:
 		//x y
 		vec2 topleft = { -1.2f, 0.6f };
