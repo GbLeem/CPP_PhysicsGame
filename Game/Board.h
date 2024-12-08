@@ -7,6 +7,12 @@ namespace gb
 	class Board
 	{
 	public:
+		Board()
+			:topleft(-1.2f,0.6f)
+			,topright(0.4f, 0.6f)
+			,bottomleft(-1.2f, -1.f)
+			,bottomright(0.4f, -1.f)
+		{}
 		void DrawBoard(RGB _color, float lineWidth)
 		{
 			SetLineWidth(lineWidth);

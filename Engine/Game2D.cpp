@@ -236,6 +236,7 @@ namespace gb
 			glPushMatrix();
 
 			DrawGrid();
+			//gbDrawText();
 
 			Update();	// the major worker function
 
@@ -265,4 +266,5 @@ namespace gb
 			gb::DrawGrid(Colors::gray, 0.5f); //Note: Game2D::drawGrid() vs jm::drawGrid(...)
 		}
 	}
+	
 }

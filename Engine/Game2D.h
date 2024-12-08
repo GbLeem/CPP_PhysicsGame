@@ -6,6 +6,7 @@
 #include "Colors.h"
 #include "Timer.h"
 #include "DrawFunctions.h"
+#include "Text.h"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
