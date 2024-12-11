@@ -10,19 +10,14 @@ namespace gb
 		WaterExample()
 			:Game2D("WaterExample", 1024, 768, false)
 		{
-
 		}
 
 		void Update() override
 		{
-			for (auto& w : waterball)
-			{
-				w.Update();
-				w.Draw();
-			}
+			waterball.Update(GetTimeStep());
+			waterball.Draw();
 		}
 	private:
-		std::vector<WaterBall> waterball;
-
+		WaterBall waterball;
 	};
 }

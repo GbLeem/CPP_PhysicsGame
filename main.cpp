@@ -7,7 +7,7 @@ int main()
 {
 	//gb::Example().Run();
 	//gb::PhysicsExample().Run();
-	gb::WaterMelonGame().Run();
+	//gb::WaterMelonGame().Run();
 
 	gb::WaterExample().Run();
 

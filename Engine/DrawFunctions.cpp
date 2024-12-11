@@ -2,6 +2,7 @@
 #include <math.h>
 #include <vector>
 
+
 namespace gb
 {
 	float GetRadian(const float& degree) // degree to radian
@@ -39,7 +40,7 @@ namespace gb
 	void Translate(const vec2& dx)
 	{
 		glTranslatef(dx.x, dx.y, 0.0);
-	}
+	}	
 
 	void Rotate(const float& degree)
 	{

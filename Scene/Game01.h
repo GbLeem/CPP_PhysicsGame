@@ -1,11 +1,8 @@
 #pragma once
 
-//#include "Actor.h"
 #include "InputHandler.h"
 #include "Game/Board.h"
 #include "Game/Hand.h"
-//#include "RandomNumberGernerator.h"
-
 
 namespace gb
 {
