@@ -152,6 +152,7 @@
     <ClInclude Include="Game\RigidObject.h" />
     <ClInclude Include="Game\Triangle.h" />
     <ClInclude Include="Game\Water.h" />
+    <ClInclude Include="Game\WaterTest.h" />
     <ClInclude Include="Scene\Example.h" />
     <ClInclude Include="Scene\Game01.h" />
     <ClInclude Include="Scene\PhysicsExample.h" />

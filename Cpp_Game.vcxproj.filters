@@ -37,6 +37,7 @@
     <ClInclude Include="Engine\Text.h" />
     <ClInclude Include="Game\Water.h" />
     <ClInclude Include="Scene\WaterBallScene.h" />
+    <ClInclude Include="Game\WaterTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

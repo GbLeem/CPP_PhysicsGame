@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Game/Water.h"
+#include "Game/WaterTest.h"
 
 namespace gb
 {
@@ -14,7 +15,7 @@ namespace gb
 
 		void Update() override
 		{
-			waterball.Update(GetTimeStep());
+			waterball.Update();
 			waterball.Draw();
 		}
 	private:
